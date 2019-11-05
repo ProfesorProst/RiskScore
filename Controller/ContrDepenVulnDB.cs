@@ -24,7 +24,7 @@ namespace DependencyCheck.Controller
 
         public void SaveList(List<DependencyVulnerabilityDB> dependencyVulnerabilityDBs)
         {
-            var depvulnDB = db.dependencyVulnerabilityDBs.ToList();
+            //var depvulnDB = db.dependencyVulnerabilityDBs.ToList();
             var dependencies = (from dv in dependencyVulnerabilityDBs
                                 select dv.dependency).ToList();
 
@@ -62,7 +62,11 @@ namespace DependencyCheck.Controller
         {
             ICollection<VulnerabilityDB> vulners = new List<VulnerabilityDB>();
             foreach (VulnerabilityDB vul in vulnerabilityDBs)
-                vulners.Add(db.vulnerabilityDBs.ToList().Find(x => x.name == vul.name));
+            {
+                VulnerabilityDB vulnerabilityDB = db.vulnerabilityDBs.ToList().Find(x => x.name == vul.name);
+                if (vulnerabilityDB!=null)
+                    vulners.Add(vulnerabilityDB);
+            }                
 
             HashSet<string> diffids = new HashSet<string>(db.vulnerabilityDBs.ToList().Select(s => s.name));
             var results = vulnerabilityDBs.Where(m => !diffids.Contains(m.name)).ToList();

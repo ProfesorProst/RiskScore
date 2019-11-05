@@ -7,15 +7,20 @@ namespace RiskScore.Entity
 {
     class RiskScoreEntities
     {
-        DateTime dateTime { get; }
+        public DateTime dateTime {  get; }
 
         List<DependencyVulnerabilityDB> dependencyVulnerabilityDBs { get; }
 
-        int score { get; set; }
+        public double score { get; set; }
 
         public RiskScoreEntities(DateTime dateTime)
         {
             this.dateTime = dateTime;
+        }
+
+        public void AddDependencyVulnerabilityDBs(DependencyVulnerabilityDB dependencyVulnerabilityDB)
+        {
+            dependencyVulnerabilityDBs.Add(dependencyVulnerabilityDB);
         }
 
     }

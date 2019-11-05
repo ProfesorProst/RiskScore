@@ -27,45 +27,35 @@ namespace T2FSv1
 
             dependencyVulnerabilityDBs = cdv.GetList();
 
-            dependencyVulnerabilityDBs = dependencyVulnerabilityDBs.Where(x => x.dependency.fileName == projectName && x.dependency.filePath == pathToProject)
+            dependencyVulnerabilityDBs = dependencyVulnerabilityDBs.Where(x => x.fileScaning == pathToProject+projectName)
                 .OrderBy(x => x.dateTime).ToList();
 
-            DateTime dateTime = DateTime.Now;
-            Dictionary<DependencyVulnerabilityDB, double> riskScoreEntities = new Dictionary<DependencyVulnerabilityDB, double>();
-            RiskRules riskScore = new RiskRules();
+            RiskRules riskRules = new RiskRules();
+            DateTime dateTime = new DateTime();
+            List<RiskScoreEntities> riskScoreEntities = new List<RiskScoreEntities>();
 
-            foreach (DependencyVulnerabilityDB dependencyVulnerabilityDB in dependencyVulnerabilityDBs)
+            ProcessDepend processDepend = new ProcessDepend(riskRules);
+            foreach (DependencyVulnerabilityDB dependencyVulnerabilityDB in dependencyVulnerabilityDBs.ToList())
             {
-                double rez = 0;
-                foreach(VulnerabilityDB vulnerability1 in dependencyVulnerabilityDB.vulnerabilityDBs)
+                List<VulnerabilityDB> vulnerabilitiesNew = new List<VulnerabilityDB>();
+                double sum = 0;
+                foreach(VulnerabilityDB vulnerability in dependencyVulnerabilityDB.vulnerabilityDBs)
                 {
-                    if (vulnerability1.vulnerability != null)
-                    {
-                        Console.WriteLine("Set vulnerability:");
-                        vulnerability1.vulnerability = Convert.ToDouble(Console.ReadLine());
-                    }
-                    if (vulnerability1.threats != null)
-                    {
-                        Console.WriteLine("Set threats:");
-                        vulnerability1.threats = Convert.ToDouble(Console.ReadLine());
-                    }
-                    if (vulnerability1.techDamage != null)
-                    {
-                        Console.WriteLine("Set techDamage:");
-                        vulnerability1.techDamage = Convert.ToDouble(Console.ReadLine());
-                    }
-                    if (vulnerability1.bizDamage != null)
-                    {
-                        Console.WriteLine("Set bizDamage:");
-                        vulnerability1.bizDamage = Convert.ToDouble(Console.ReadLine());
-                    }
+                    vulnerabilitiesNew.Add(processDepend.SetParamsConsole(vulnerability));
+                    sum += vulnerability.rezult.GetValueOrDefault();
+                }                   
 
-                    double rezult = riskScore.Calculete(new double[] { vulnerability1.vulnerability.GetValueOrDefault(), vulnerability1.threats.GetValueOrDefault()
-                        , vulnerability1.techDamage.GetValueOrDefault(), vulnerability1.bizDamage.GetValueOrDefault() });
+                dependencyVulnerabilityDB.vulnerabilityDBs = vulnerabilitiesNew;
+                cdv.Save(dependencyVulnerabilityDB);
 
-                    rez += rezult;
+                if (dependencyVulnerabilityDB.dateTime != dateTime)
+                {
+                    RiskScoreEntities risk = new RiskScoreEntities(dateTime);
+                    riskScoreEntities.Add(risk);
                 }
-                riskScoreEntities.Add(dependencyVulnerabilityDB, rez);
+
+                riskScoreEntities.Find(x => x.dateTime == dateTime).AddDependencyVulnerabilityDBs(dependencyVulnerabilityDB);
+                riskScoreEntities.Find(x => x.dateTime == dateTime).score += sum;
             }
 
             Console.WriteLine(riskScoreEntities);

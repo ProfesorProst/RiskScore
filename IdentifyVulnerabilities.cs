@@ -24,10 +24,10 @@ namespace DependencyCheck
             string rezult = File.ReadAllText(baseDirectory + "dependency-check-report.json");
 
             File.Delete(baseDirectory + "dependency-check-report.json");
-            return ParseJSONFromOwaspDC(rezult);
+            return ParseJSONFromOwaspDC(rezult, pathToProject+projectName);
         }
 
-        private List<DependencyVulnerabilityDB> ParseJSONFromOwaspDC(string rezult)
+        private List<DependencyVulnerabilityDB> ParseJSONFromOwaspDC(string rezult, string filescaning)
         {
             JObject obj = JObject.Parse(rezult);
             var token = (JArray)obj.SelectToken("dependencies");
@@ -39,9 +39,9 @@ namespace DependencyCheck
                 {
                     dependency = (new DependencyDB { fileName = x.FileName, filePath = x.FilePath, name = x.Packages.First().Id }),
                     vulnerabilityDBs = x.Vulnerabilities.Select(x => new VulnerabilityDB
-                    { name = x.Name, vulnerability = x.Cvssv3.BaseScore, description = x.Description }).ToList()
-                    ,
-                    dateTime = DateTime.Now
+                    { name = x.Name, vulnerability = x.Cvssv3.BaseScore, description = x.Description }).ToList(),
+                    dateTime = test.ProjectInfo.ReportDate.UtcDateTime,
+                    fileScaning = filescaning
                 })).ToList();
 
             return dependencyVulnerabilityDBs;
