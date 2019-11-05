@@ -31,42 +31,44 @@ namespace T2FSv1
                 .OrderBy(x => x.dateTime).ToList();
 
             DateTime dateTime = DateTime.Now;
-            Dictionary<DependencyVulnerabilityDB,int> riskScoreEntities = new Dictionary<DependencyVulnerabilityDB, int>();
-            if (dependencyVulnerabilityDBs.First() != null)
-            {
-                dateTime = dependencyVulnerabilityDBs.First().dateTime;
-                riskScoreEntities.Add(new RiskScoreEntity(dateTime));
-            }
-               
+            Dictionary<DependencyVulnerabilityDB, double> riskScoreEntities = new Dictionary<DependencyVulnerabilityDB, double>();
+            RiskRules riskScore = new RiskRules();
+
             foreach (DependencyVulnerabilityDB dependencyVulnerabilityDB in dependencyVulnerabilityDBs)
             {
-                if(dependencyVulnerabilityDB.dateTime == dateTime)
+                double rez = 0;
+                foreach(VulnerabilityDB vulnerability1 in dependencyVulnerabilityDB.vulnerabilityDBs)
                 {
-                    riskScoreEntities.Add
+                    if (vulnerability1.vulnerability != null)
+                    {
+                        Console.WriteLine("Set vulnerability:");
+                        vulnerability1.vulnerability = Convert.ToDouble(Console.ReadLine());
+                    }
+                    if (vulnerability1.threats != null)
+                    {
+                        Console.WriteLine("Set threats:");
+                        vulnerability1.threats = Convert.ToDouble(Console.ReadLine());
+                    }
+                    if (vulnerability1.techDamage != null)
+                    {
+                        Console.WriteLine("Set techDamage:");
+                        vulnerability1.techDamage = Convert.ToDouble(Console.ReadLine());
+                    }
+                    if (vulnerability1.bizDamage != null)
+                    {
+                        Console.WriteLine("Set bizDamage:");
+                        vulnerability1.bizDamage = Convert.ToDouble(Console.ReadLine());
+                    }
+
+                    double rezult = riskScore.Calculete(new double[] { vulnerability1.vulnerability.GetValueOrDefault(), vulnerability1.threats.GetValueOrDefault()
+                        , vulnerability1.techDamage.GetValueOrDefault(), vulnerability1.bizDamage.GetValueOrDefault() });
+
+                    rez += rezult;
                 }
-                else
-                {
-
-                }
-
-
+                riskScoreEntities.Add(dependencyVulnerabilityDB, rez);
             }
 
-
-
-            double vulnerability = 10.0;
-            double threats = 1.0;
-            double techDamage = 1.0;
-            double bizDamage = 1.0;
-
-            Console.WriteLine("vulnerability : " + vulnerability);
-            Console.WriteLine("threats : " + threats);
-            Console.WriteLine("Tech Damage : " + techDamage);
-            Console.WriteLine("Biz Damage : " + bizDamage);
-
-            RiskRules riskScore = new RiskRules();
-            double rezult = riskScore.Calculete(new double[] { vulnerability, threats, techDamage, bizDamage });
-            Console.WriteLine(rezult);
+            Console.WriteLine(riskScoreEntities);
             Console.ReadLine();
 
         }
