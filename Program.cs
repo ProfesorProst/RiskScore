@@ -15,6 +15,14 @@ namespace T2FSv1
     {
         static void Main(string[] args)
         {
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 5; j++)
+                    for (int k = 0; k < 3; k++)
+                        for (int z = 0; z < 5; z++)
+                            Console.WriteLine("{0}A-{1}B-{2}C-{3}D ", i, j, k,z);
+
+
             string projectName = "index";
             string pathToProject = "C:\\Users\\profe\\Desktop\\index";
             string outFromat = "JSON";
