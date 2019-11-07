@@ -16,11 +16,12 @@ namespace RiskScore.Entity
         public RiskScoreEntities(DateTime dateTime)
         {
             this.dateTime = dateTime;
+            dependencyVulnerabilityDBs = new List<DependencyVulnerabilityDB>();
         }
 
         public void AddDependencyVulnerabilityDBs(DependencyVulnerabilityDB dependencyVulnerabilityDB)
         {
-            dependencyVulnerabilityDBs.Add(dependencyVulnerabilityDB);
+            dependencyVulnerabilityDBs.Add(dependencyVulnerabilityDB as DependencyVulnerabilityDB);
         }
 
     }
