@@ -1,8 +1,5 @@
 ﻿using DependencyCheck.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Text;
 
 namespace DependencyCheck.Data
 {
@@ -15,6 +12,7 @@ namespace DependencyCheck.Data
         public DbSet<DependencyVulnerabilityDB> dependencyVulnerabilityDBs { get; set; }
         public DbSet<DependencyDB> dependencyDBs { get; set; }
         public DbSet<VulnerabilityDB> vulnerabilityDBs { get; set; }
+        public DbSet<UserDB> UserDB { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

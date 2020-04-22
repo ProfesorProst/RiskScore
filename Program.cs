@@ -5,14 +5,14 @@ using RiskScore.Controller;
 using RiskScore.Entity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using T2FSv1.Controller;
-using T2FSv1.Entity;
 
 namespace T2FSv1
 {
     class Program
     {
+        BackgroundWorker bw;
         static void Main(string[] args)
         {
             string projectName = "index";
@@ -39,6 +39,13 @@ namespace T2FSv1
             {
                 List<VulnerabilityDB> vulnerabilitiesNew = new List<VulnerabilityDB>();
                 double sum = 0;
+
+                if (processDepend.CheckIfNeedParams(dependencyVulnerabilityDB.vulnerabilityDBs)) 
+                {
+                    TelegramBotControler telegramBotControler = new TelegramBotControler();
+                    
+                }
+
                 foreach(VulnerabilityDB vulnerability in dependencyVulnerabilityDB.vulnerabilityDBs)
                 {
                     vulnerabilitiesNew.Add(processDepend.SetParamsConsole(vulnerability));

@@ -13,6 +13,15 @@ namespace RiskScore.Controller
         {
             this.riskRules = riskRules;
         }
+
+        public bool CheckIfNeedParams(List<VulnerabilityDB> vulnerabilityDBs)
+        {
+            foreach (VulnerabilityDB vulnerability in vulnerabilityDBs)
+                if (vulnerability.vulnerability == null || vulnerability.threats == null
+                    || vulnerability.techDamage == null || vulnerability.bizDamage == null)
+                    return true;
+            return false;
+        }
         public VulnerabilityDB SetParamsConsole(VulnerabilityDB vulnerability)
         {
             if (vulnerability.vulnerability == null)
